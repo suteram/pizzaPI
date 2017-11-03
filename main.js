@@ -1,17 +1,66 @@
 /**
  * Imports
  */
-const pizzapi = require('dominos');
-const buttons = require('rpi-gpio-buttons')([19, 16, 26, 20, 21]);
+var pizzapi = require('dominos');
+var Gpio = require('onoff').Gpio;
+var pepButton = new Gpio(6, 'in', 'both');
+var cheeseButton = new Gpio(19, 'in', 'both');
+var sausageButton = new Gpio(20, 'in', 'both');
+var brownieButton = new Gpio(21, 'in', 'both');
+var finishButton = new Gpio(26, 'in', 'both');
 
+pepButton.watch(function(err, value) {
+    if(err){
+        console.log('There was an error:', err);
+        return;
+    }
+    addItemOrder('P_14SCREEN');
+    console.log('Added Pepperoni pizza to order');
+});
+
+cheeseButton.watch(function(err, value) {
+    if(err){
+        console.log('There was an error:', err);
+        return;
+    }
+    addItemOrder('14SCREEN');
+    console.log('Added Cheese pizza to order');
+});
+
+sausageButton.watch(function(err, value) {
+    if(err){
+        console.log('There was an error:', err);
+        return;
+    }
+    addItemOrder('S_14SCREEN');
+    console.log('Added sausage pizza to order');
+});
+
+brownieButton.watch(function(err, value) {
+    if(err){
+        console.log('There was an error:', err);
+        return;
+    }
+    addItemOrder('MARBRWNE');
+    console.log('Added marble brownie to order');
+});
+
+finishButton.watch(function(err, value) {
+    if(err){
+        console.log('There was an error:', err);
+        return;
+    }
+    finishOrder();
+    console.log('Finished order');
+});
 /**
  * Define the store
  */
-let optionArray = [];
-let myStore = new pizzapi.Store(5347);
+var optionArray = [];
+var myStore = new pizzapi.Store(5347);
 myStore.ID = 5347;
 
-const cust = new pizzapi.Customer(
+var cust = new pizzapi.Customer(
     {
         firstName: 'Michael',
         lastName: 'Sutera',
@@ -20,7 +69,7 @@ const cust = new pizzapi.Customer(
     }
 );
 
-let order = new pizzapi.Order(
+var order = new pizzapi.Order(
     {
         customer: cust,
         storeID: myStore.ID,
@@ -28,40 +77,22 @@ let order = new pizzapi.Order(
     }
 );
 
-const addItemOrder = ((code) => {
-    let pizza = new pizzapi.Item(
+var addItemOrder = ((code) => {
+    var pizza = new pizzapi.Item(
         {
-            code: code
+            code: code,
+            quantity: 1,
+            options: []
         }
     );
     order.addItem(pizza);
 });
 
-const finishOrder = (() => {
+var finishOrder = (() => {
     order.validate((result) => {
         console.log(result.result.success);
     });
     order.price((result) => {
         console.log(result.result.Order.Amounts)
     });
-});
-
-buttons.on('clicked', function(pin) {
-    switch(pin) {
-        case 19:
-            addItemOrder('P_14SCREEN');
-            break;
-        case 16:
-            addItemOrder('14SCREEN');
-            break;
-        case 26:
-            addItemOrder('S_14SCREEN');
-            break;
-        case 20:
-            addItemOrder('MARBRWNE');
-            break;
-        case 21:
-            finishOrder();
-            break;
-    }
 });

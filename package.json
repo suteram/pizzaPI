@@ -17,6 +17,6 @@
   "license": "ISC",
   "dependencies": {
     "dominos": "^2.1.1",
-    "rpi-gpio-buttons": "^1.0.3"
+    "onoff": "^1.1.8"
   }
 }
