@@ -16,6 +16,7 @@
   "author": "Michael Sutera, Evan Matthews, Austin Mehnert, Trey Stacy",
   "license": "ISC",
   "dependencies": {
-    "dominos": "^2.1.1"
+    "dominos": "^2.1.1",
+    "rpi-gpio-buttons": "^1.0.3"
   }
 }
