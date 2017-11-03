@@ -1,0 +1,21 @@
+{
+  "name": "pizzapi",
+  "version": "1.0.0",
+  "description": "Orders a pizza with specific toppings from a Raspberry Pi.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pizza",
+    "dominos",
+    "raspberry",
+    "pi",
+    "order"
+  ],
+  "author": "Michael Sutera, Evan Matthews, Austin Mehnert, Trey Stacy",
+  "license": "ISC",
+  "dependencies": {
+    "dominos": "^2.1.1"
+  }
+}
