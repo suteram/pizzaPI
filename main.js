@@ -3,11 +3,11 @@
  */
 var pizzapi = require('dominos');
 var Gpio = require('onoff').Gpio;
-var pepButton = new Gpio(6, 'in', 'both');
-var cheeseButton = new Gpio(19, 'in', 'both');
-var sausageButton = new Gpio(20, 'in', 'both');
-var brownieButton = new Gpio(21, 'in', 'both');
-var finishButton = new Gpio(26, 'in', 'both');
+var pepButton = new Gpio(21, 'in', 'falling');
+var cheeseButton = new Gpio(16, 'in', 'falling');
+var sausageButton = new Gpio(15, 'in', 'falling');
+var brownieButton = new Gpio(14, 'in', 'falling');
+var finishButton = new Gpio(24, 'in', 'falling');
 
 pepButton.watch(function(err, value) {
     if(err){
@@ -56,7 +56,6 @@ finishButton.watch(function(err, value) {
 /**
  * Define the store
  */
-var optionArray = [];
 var myStore = new pizzapi.Store(5347);
 myStore.ID = 5347;
 
@@ -90,9 +89,9 @@ var addItemOrder = ((code) => {
 
 var finishOrder = (() => {
     order.validate((result) => {
-        console.log(result.result.success);
+        console.log(result.result.StatusItems[0].Code);
     });
     order.price((result) => {
-        console.log(result.result.Order.Amounts)
+        console.log(result.result.Order.PriceOrderTime)
     });
 });
