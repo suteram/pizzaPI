@@ -2,6 +2,7 @@
  * Imports
  */
 const pizzapi = require('dominos');
+const buttons = require('rpi-gpio-buttons')([19, 16, 26, 20, 21]);
 
 /**
  * Define the store
@@ -9,14 +10,6 @@ const pizzapi = require('dominos');
 let optionArray = [];
 let myStore = new pizzapi.Store(5347);
 myStore.ID = 5347;
-
-// myStore.getFriendlyNames(
-//     getMenuData
-// );
-//
-// function getMenuData(menuData) {
-//     console.log(menuData);
-// };
 
 const cust = new pizzapi.Customer(
     {
@@ -35,52 +28,40 @@ let order = new pizzapi.Order(
     }
 );
 
-const addOption = ((buttonCode) => { //This takes whatever the button passes through and throws it into the function
-    optionArray.push(buttonCode); //Adds the 'buttonCode' option to the options array
-});
-
-const removeOption = ((buttonCode) => { //This takes whatever the button passes through and throws it into the function
-    let index = null;
-    optionArray.forEach((option) => {
-        if(option = buttonCode){
-            index = option.indexOf();
-        }
-    });
-    optionArray.pop(index); //Removes the 'buttonCode' option from the options array
-});
-
-const addItemOrder = ((options) => {  //This takes the options array and throws it into the function
-    let pizza = new pizzapi.Item( //Creates the pizza with the passed in option array
+const addItemOrder = ((code) => {
+    let pizza = new pizzapi.Item(
         {
-            code: '14SCREEN',
-            quantity: 1,
-            options: options
+            code: code
         }
-    )
-    order.addItem(pizza) //Adds the pizza to the order
+    );
+    order.addItem(pizza);
 });
 
-// removeOption('STRING BASED ON WHICH BUTTON PRESSED'); //Call this when a button is pressed, pass in a string based on which button it is
-addOption('P'); //Call this when a button is pressed, pass in a string based on which button it is
-addItemOrder(optionArray); //Call when 'Complete Order' button is pressed
+const finishOrder = (() => {
+    order.validate((result) => {
+        console.log(result.result.success);
+    });
+    order.price((result) => {
+        console.log(result.result.Order.Amounts)
+    });
+});
 
-order.validate(
-    function(result) {
-        console.log('We did it!')
+buttons.on('clicked', function(pin) {
+    switch(pin) {
+        case 19:
+            addItemOrder('P_14SCREEN');
+            break;
+        case 16:
+            addItemOrder('14SCREEN');
+            break;
+        case 26:
+            addItemOrder('S_14SCREEN');
+            break;
+        case 20:
+            addItemOrder('MARBRWNE');
+            break;
+        case 21:
+            finishOrder();
+            break;
     }
-);
-
-order.price(
-    function(result) {
-        console.log('Price: ', result)
-    }
-);
-
-/**
- * CODES:
- * P - PEPPERONI
- * S - SAUSAGE
- * B - BACON
- * H - HAM
- *
- */
+});
